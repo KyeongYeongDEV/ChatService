@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES6", // 또는 ES2015 이상
+    "module": "commonjs", // 또는 ESNext, Node 등 프로젝트에 맞는 모듈 설정
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // 아래 두 옵션을 추가
+    "experimentalDecorators": true,  // 데코레이터 사용을 허용
+    "emitDecoratorMetadata": true    // 런타임에서 데코레이터 메타데이터를 생성 (주로 DI와 함께 사용)
+  }
+}
