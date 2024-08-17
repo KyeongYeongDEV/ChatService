@@ -3,3 +3,8 @@ export interface UserJoinRequestDTO {
     password : string;
     name : string;
 }
+
+export interface UserLoginRequestDTO {
+    email : string;
+    password : string;
+}

@@ -1,0 +1,60 @@
+import { Inject, Service } from "typedi";
+import UserRepository from "../repositories/user";
+import {UserJoinRequestDTO, UserLoginRequestDTO} from "../dto/request/user"
+import { UserJoinResponseDTO, UserLoginResponseDTO } from "../dto/response/user";
+import JwtService from "./jwt.service";
+
+@Service()
+export default class AuthService {
+    constructor(
+        @Inject( () => UserRepository ) private readonly userRepository : UserRepository,
+        @Inject( () => JwtService ) private readonly jwtService : JwtService
+        ) {}
+
+    login = async ({ email, password } : UserLoginRequestDTO) : Promise<UserLoginResponseDTO> => {
+        const user = await this.userRepository.findOndByPk({ email });
+
+        if (!user) {
+            throw new Error('존재하지 않는 아이디입니다');
+        }
+
+        if (user.u_password !== password) {
+            throw new Error('비밀번호가 일치하지 않습니다.')
+        }
+
+        const {u_password, ...payload} = user;
+        const [ accessToken, refreshToken ] = await this.generateToken(payload);
+
+        const userLoginResponseDTO : UserLoginResponseDTO = {
+            statusCode : 200,
+            message : '로그인에 성공했습니다',
+            data : {accessToken, refreshToken},
+        };
+
+        return userLoginResponseDTO;
+    }
+
+    join = async (user : UserJoinRequestDTO) : Promise<UserJoinResponseDTO> =>{
+        const existUser = await this.userRepository.findOndByPk({email : user.email});
+
+        if (existUser) {
+            throw new Error('이미 존재하는 이메일입니다');
+        }
+
+        await this.userRepository.create(user);
+
+        const createUser = await this.userRepository.findOndByPk({email : user.email});
+        const userJoinResponseDTO : UserJoinResponseDTO = {
+            statusCode : 200,
+            message : '가입에 성공하였습니다',
+            data : createUser,
+        }
+
+        return userJoinResponseDTO;
+    }
+
+    private generateToken = async (payload : object) : Promise<[string, string]> => {
+        return [this.jwtService.generateAccessToken(payload), this.jwtService.generateRefreshToken(payload)];
+    }
+
+}
