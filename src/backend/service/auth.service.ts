@@ -3,12 +3,14 @@ import UserRepository from "../repositories/user";
 import {UserJoinRequestDTO, UserLoginRequestDTO} from "../dto/request/user"
 import { UserJoinResponseDTO, UserLoginResponseDTO } from "../dto/response/user";
 import JwtService from "./jwt.service";
+import { CryptoService } from "./crypto.service";
 
 @Service()
 export default class AuthService {
     constructor(
         @Inject( () => UserRepository ) private readonly userRepository : UserRepository,
-        @Inject( () => JwtService ) private readonly jwtService : JwtService
+        @Inject( () => JwtService ) private readonly jwtService : JwtService,
+        @Inject( () => CryptoService ) private readonly cryptoService :CryptoService,
         ) {}
 
     login = async ({ email, password } : UserLoginRequestDTO) : Promise<UserLoginResponseDTO> => {
@@ -17,8 +19,8 @@ export default class AuthService {
         if (!user) {
             throw new Error('존재하지 않는 아이디입니다');
         }
-
-        if (user.u_password !== password) {
+    
+        if (!(await this.cryptoService.comparePassword(password, user.u_password))) {
             throw new Error('비밀번호가 일치하지 않습니다.')
         }
 
@@ -40,6 +42,9 @@ export default class AuthService {
         if (existUser) {
             throw new Error('이미 존재하는 이메일입니다');
         }
+
+        const hashedPassword : string = await this.cryptoService.hashPassword(user.password);
+        user.password = hashedPassword;
 
         await this.userRepository.create(user);
 

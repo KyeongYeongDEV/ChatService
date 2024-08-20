@@ -7,6 +7,3 @@ DB_PORT = 3306,
 
 #SERVER
 PORT = 8000
-
-#crypto
-BCRYPT_SALT_ROUNDS = 2 
