@@ -8,7 +8,7 @@ export default async () => {
         const pool = mysql.createPool({
             host : process.env.DB_HOST,
             user : process.env.DB_USER,
-            password : process.env.DB_PASSORD,
+            password : process.env.DB_PASSWORD,
             port : process.env.DB_PORT as unknown as number,
             database : process.env.DB_DATABASE,
             connectionLimit : parseInt(process.env.DB_CONNECTION_LIMIT || '10', 10),
@@ -24,6 +24,6 @@ export default async () => {
         return pool;
     } catch (error) {
         console.error('MySQL 연결 오류 : ',error); 
-        throw error;
+        throw error; 
     }   
 } 
