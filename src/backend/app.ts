@@ -8,5 +8,6 @@ export default async function createApp(): Promise<Application> {
     const app: Application = express();
     await loaders({ app });
     // app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerFile));
+
     return app;
 }
