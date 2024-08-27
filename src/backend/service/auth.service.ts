@@ -1,5 +1,5 @@
 import { Inject, Service } from "typedi";
-import UserRepository from "../repositories/user";
+import UserRepository from "../repositories/user.repository";
 import {UserJoinRequestDTO, UserLoginRequestDTO} from "../dto/request/user"
 import { UserJoinResponseDTO, UserLoginResponseDTO } from "../dto/response/user";
 import JwtService from "./jwt.service";

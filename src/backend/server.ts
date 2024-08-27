@@ -28,7 +28,7 @@ dotenv.config();
 const PORT = process.env.PORT;
 (async function serverStart() {
     const app = await createApp();
-    http.createServer(app).listen(PORT, () => {
+    http.createServer(app).listen(8000, () => {
         console.log(`Server started on ${PORT}`);
     });
 })();

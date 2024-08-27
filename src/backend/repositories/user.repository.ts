@@ -1,6 +1,6 @@
 import {Inject, Service} from "typedi";
 import mysql from "mysql2/promise";
-import Repository from ".";
+import Repository from "./index.repository";
 import { UserDTO } from "../dto/response/user";
 import { UserJoinRequestDTO } from "../dto/request/user";
 

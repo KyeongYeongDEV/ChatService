@@ -1,6 +1,6 @@
 import mysql from 'mysql2/promise';
 import { Inject, Service } from 'typedi';
-import Repository from '.';
+import Repository from './index.repository';
 import { ChatRoomDTO } from '../dto/response/chat';
 
 @Service()
@@ -41,18 +41,19 @@ export default class ChatRepository extends Repository {
         return results.length ? (results[0] as ChatRoomDTO) : null;
     }
     
-    async create({ u_id, title } : { u_id : number, title : string }) : Promise<number>{
+    async create({ u_id, title } : { u_id : number, title : string }) : Promise<number> {
         const connection = await this.pool.getConnection();
-        try{
+        try {
             await connection.beginTransaction();
-
+    
             const createRoomQuery = 'INSERT INTO ChatRoom (title) VALUES (?)';
             const [roomResult] = await connection.execute(createRoomQuery, [title]);
+    
             const cr_id = (roomResult as any).insertId;
-
-            const linkeUserQuery = 'INSERT INTO UserChatRoom (u_id, cr_id) VALUES (?,?)';
-            await connection.execute(linkeUserQuery, [u_id, cr_id]);
-
+    
+            const linkUserQuery = 'INSERT INTO UserChatRoom (u_id, cr_id) VALUES (?, ?)';
+            await connection.execute(linkUserQuery, [u_id, cr_id]);
+    
             await connection.commit();
             return cr_id;
         } catch (error) {

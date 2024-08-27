@@ -1,11 +1,15 @@
 import { CommonResponseDTO } from ".";
 
 export interface ChatRoomDTO {
+    cr_id : number,
+    u_id : number,
     title : string,
 }
 
 export interface MessageDTO {
+    m_id : number,
     cr_id : number,
+    u_id : number,
     content : string,
     sender_name : string,
     createAt : Date,
