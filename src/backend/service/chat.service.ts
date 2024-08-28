@@ -10,7 +10,7 @@ export default class ChatService {
         @Inject( () => MessageRepository ) private readonly messageRepository : MessageRepository
     ){}
 
-    async getMessage({ cr_id, u_id } : { cr_id : number, u_id :number }) : Promise<GetMessageResponseDTO> {
+    async getMessages({ cr_id, u_id } : { cr_id : number, u_id :number }) : Promise<GetMessageResponseDTO> {
         const foundChatRoom  = await this.chatRepository.findOneByRoomId({ cr_id });
 
         if(!foundChatRoom) throw new Error('채팅방이 존재하지 않습니다');

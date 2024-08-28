@@ -3,6 +3,7 @@ import mysql from "mysql2/promise";
 import Repository from "./index.repository";
 import { UserDTO } from "../dto/response/user";
 import { UserJoinRequestDTO } from "../dto/request/user";
+import { emit } from "process";
 
 
 @Service()
@@ -11,9 +12,9 @@ export default class UserRepository extends Repository{
         super(pool);
     }
 
-    findOndByPk = async ({ email } : { email : string }) : Promise<UserDTO> => {
-        const query = 'SELECT * FROM User WHERE email = ? limit = 1';
-        return (await this.executeQuery(query, [email]))[0];
+    findOndByPk = async ({ u_email } : { u_email : string }) : Promise<UserDTO> => {
+        const query = 'SELECT * FROM User WHERE email = ? limit 1';
+        return (await this.executeQuery(query, [u_email]))[0];
     }
 
     create = async (user : UserJoinRequestDTO) => {

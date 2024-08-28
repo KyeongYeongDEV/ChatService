@@ -13,18 +13,20 @@ export default class AuthService {
         @Inject( () => CryptoService ) private readonly cryptoService :CryptoService,
         ) {}
 
-    login = async ({ email, password } : UserLoginRequestDTO) : Promise<UserLoginResponseDTO> => {
-        const user = await this.userRepository.findOndByPk({ email });
+    login = async ({ u_email, u_password } : UserLoginRequestDTO) : Promise<UserLoginResponseDTO> => {
+        const user = await this.userRepository.findOndByPk({ u_email });
 
         if (!user) {
             throw new Error('존재하지 않는 아이디입니다');
         }
+
+        console.log(user.password);
     
-        if (!(await this.cryptoService.comparePassword(password, user.u_password))) {
+        if (!(await this.cryptoService.comparePassword(u_password, user.password))) {
             throw new Error('비밀번호가 일치하지 않습니다.')
         }
 
-        const {u_password, ...payload} = user;
+        const {password, ...payload} = user;
         const [ accessToken, refreshToken ] = await this.generateToken(payload);
 
         const userLoginResponseDTO : UserLoginResponseDTO = {
@@ -37,7 +39,7 @@ export default class AuthService {
     }
 
     join = async (user : UserJoinRequestDTO) : Promise<UserJoinResponseDTO> =>{
-        const existUser = await this.userRepository.findOndByPk({email : user.email});
+        const existUser = await this.userRepository.findOndByPk({u_email : user.email});
 
         if (existUser) {
             throw new Error('이미 존재하는 이메일입니다');
@@ -48,7 +50,7 @@ export default class AuthService {
 
         await this.userRepository.create(user);
 
-        const createUser = await this.userRepository.findOndByPk({email : user.email});
+        const createUser = await this.userRepository.findOndByPk({u_email : user.email});
         const userJoinResponseDTO : UserJoinResponseDTO = {
             statusCode : 200,
             message : '가입에 성공하였습니다',

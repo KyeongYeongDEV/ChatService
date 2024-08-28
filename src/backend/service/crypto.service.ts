@@ -9,6 +9,9 @@ export class CryptoService {
     }
 
     async comparePassword(plainPassword : string, hashPassword : string) : Promise<boolean> {
+        if (!plainPassword || !hashPassword ){
+            throw new Error('Both plainPassword and hashPassword are required for comparison');
+        }
         return await bcrypt.compare(plainPassword, hashPassword);
     }
 }

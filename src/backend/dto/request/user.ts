@@ -5,6 +5,6 @@ export interface UserJoinRequestDTO {
 }
 
 export interface UserLoginRequestDTO {
-    email : string;
-    password : string;
+    u_email : string;
+    u_password : string;
 }

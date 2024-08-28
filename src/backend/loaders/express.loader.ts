@@ -5,7 +5,10 @@ import cors from "cors";
 
 
 export default async ({ app } : { app : Application }) => {
-    app.use(cors());
+    app.use(cors((req, callback) => {
+        console.log(`CORS enabled for: ${req.method} ${req.url}`)
+        callback(null, { origin: true });
+    }));
     app.use(json());
     app.use(urlencoded({ extended : false }));
     app.use('/api', router());

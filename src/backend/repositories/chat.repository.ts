@@ -29,19 +29,28 @@ export default class ChatRepository extends Repository {
     async findOneByRoomId({ cr_id } : { cr_id : number }) : Promise<ChatRoomDTO | null> {
         const query = `
             SELECT 
+                m_id, 
                 cr_id, 
-                title 
+                u_id, 
+                sender_name, 
+                content, 
+                createAt 
             FROM 
-                ChatRoom 
+                Message 
             WHERE 
                 cr_id = ? 
-            LIMIT 1
+            ORDER BY 
+                createAt DESC
         `;
+
         const results = await this.executeQuery(query, [cr_id]);
         return results.length ? (results[0] as ChatRoomDTO) : null;
     }
     
     async create({ u_id, title } : { u_id : number, title : string }) : Promise<number> {
+        if (u_id === undefined || title === undefined) {
+            throw new Error('u_id와 title 이 정의되지 않았습니다');
+        }
         const connection = await this.pool.getConnection();
         try {
             await connection.beginTransaction();

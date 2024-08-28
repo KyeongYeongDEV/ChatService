@@ -2,9 +2,9 @@ import { CommonResponseDTO } from ".";
 
 export interface UserDTO {
     u_id : number;
-    u_email : string;
-    u_password : string;
-    u_name : string;
+    email : string;
+    password : string;
+    name : string;
 }
 
 export interface UserLoginDTO {

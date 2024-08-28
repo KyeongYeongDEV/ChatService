@@ -1,5 +1,4 @@
 import { Request ,Response, NextFunction } from "express";
-import { json } from "stream/consumers";
 import { Inject, Service } from "typedi";
 import { UserJoinRequestDTO, UserLoginRequestDTO } from "../../dto/request/user";
 import { UserJoinResponseDTO, UserLoginResponseDTO } from "../../dto/response/user";
@@ -11,8 +10,8 @@ export default class AuthController {
 
     login = async (req : Request, res : Response, next : NextFunction ) => {
         try {
-            const {email, password} = req.body as UserLoginRequestDTO;
-            const userLoginResponseDTO : UserLoginResponseDTO = await this.authService.login({ email, password });
+            const {u_email, u_password} = req.body as UserLoginRequestDTO;
+            const userLoginResponseDTO : UserLoginResponseDTO = await this.authService.login({ u_email, u_password });
             return res.status(200).json(userLoginResponseDTO);
         } catch (error) {
             return next(error);
