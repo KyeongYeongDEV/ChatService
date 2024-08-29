@@ -74,6 +74,56 @@ export default class ChatRepository extends Repository {
         }
     }   
 
+    async createOneToOneChatRoom({ u_id, other_u_id, title } : { u_id : number, other_u_id : number, title : string }) : Promise<number> {
+        if (u_id === undefined || other_u_id === undefined || title  === undefined) {
+            throw new Error(' u_id, other_u_id, title 이 정의되지 않았습니다');
+        }
+
+        const connection = await this.pool.getConnection();
+        try{
+            await connection.beginTransaction();
+
+            const createRoomQuery = 'INSERT INTO ChatRoom (title) VALUES (?)';
+            const [roomResult] = await connection.execute(createRoomQuery, [title]);
+
+            const cr_id = (roomResult as any).insertId;
+
+            const linkUserQuery = 'INSERT INTO UserChatRoom (u_id, cr_id) VALUES (?, ?';
+            await connection.execute(linkUserQuery, [u_id, cr_id]);
+            await connection.execute(linkUserQuery, [other_u_id, cr_id]);
+
+            await connection.commit();
+
+            return cr_id;
+        } catch (error) {
+            await connection.rollback();
+            console.error(`Error generatind one-to-one chat room : ${error}`);
+            throw error;
+        } finally {
+            connection.release();
+        }
+    }
+
+    async addUserToChatRoom({ u_id, cr_id } : { u_id : number, cr_id : number }) : Promise<void> {
+        if (u_id === undefined || cr_id === undefined) {
+            throw new Error('u_id와 cr_id 가 정의되지 않았습니다');
+        }
+
+        const connection = await this.pool.getConnection();
+        try{
+            await connection.beginTransaction();
+
+            const linkUserQuery = "INSERT INTO UserChatRoom (u_id, cr_id) VALUES (?, ?)";
+            await connection.execute(linkUserQuery, [u_id, cr_id]);
+            await connection.commit();
+        } catch (error) {
+            await connection.rollback();
+            console.error(`Error adding user to chat room : ${error}`);
+        } finally {
+            connection.release();
+        }
+    }
+
     async delete({ cr_id } : {cr_id : number}) : Promise<void> {
         const connection =await this.pool.getConnection();
         try{

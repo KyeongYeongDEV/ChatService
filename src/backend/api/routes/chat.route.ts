@@ -3,7 +3,6 @@ import Container from "typedi";
 import ChatController from "../controllers/chat.controller";
 import guardMiddleware from "../middlewares/guard.middleware";
 
-
 export default ({ app } : { app : Router }) => {
     const route = Router();
     app.use("/chat", route);
