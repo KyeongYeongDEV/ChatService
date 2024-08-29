@@ -53,6 +53,26 @@ export default class ChatController {
         }
     };
 
+    generateOneToOneChatRoom = async (req : Request, res : Response, next : NextFunction) => {
+        try{
+            const { u_id, other_u_id, title } : { u_id : number, other_u_id : number, title : string } = req.body;
+            const cahtRoomResponseDTO = await this.chatService.generateOneToOneChatRoom({ u_id, other_u_id, title });
+            return res.status(200).json(cahtRoomResponseDTO);
+        } catch (error) {  
+            return next(error);
+        }
+    }
+
+    addUserToChatRoom = async (req : Request, res : Response, next : NextFunction) => {
+        try{
+            const { u_id, cr_id } : { u_id : number, cr_id : number } = req.body;
+            const addUserResponseDTO = await this.chatService.addUserToChatRoom({ u_id, cr_id });
+            return addUserResponseDTO;
+        }catch (error) {
+            return next(error);
+        }
+    }
+
     deleteChatRoom = async (req : Request, res : Response, next : NextFunction) => {
         try{
             const cr_id : number = parseInt(req.params.cr_id);
