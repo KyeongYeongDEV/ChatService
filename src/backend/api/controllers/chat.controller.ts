@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { Inject, Service } from "typedi";
-import { DeleteChatRoomResponseDTO, GetCahtRoomResponseDTO, GetMessageResponseDTO } from "../../dto/response/chat";
+import { DeleteChatRoomResponseDTO, GetCahtRoomResponseDTO, GetChatRoomWithUserResponseDTO, GetMessageResponseDTO } from "../../dto/response/chat";
 import ChatService from "../../service/chat.service";
 import { Payload } from "../../types/express";
 
@@ -23,12 +23,22 @@ export default class ChatController {
     getChatRooms = async (req : Request, res : Response, next : NextFunction) => {
         try{
             const { u_id } : { u_id : number } = req.user as Payload;
-            const cahtRoomResponseDTO : GetCahtRoomResponseDTO = await this.chatService.getChatRoom({ u_id });
-            return res.status(200).json(cahtRoomResponseDTO);
+            const chatRoomResponseDTO : GetCahtRoomResponseDTO = await this.chatService.getChatRoom({ u_id });
+            return res.status(200).json(chatRoomResponseDTO);
         } catch (error) {
             return next(error);
         }
     };
+
+    getChatRoomWithUsers = async (req : Request, res : Response, next : NextFunction) => {
+        try{
+            const { cr_id } : { cr_id : number } = req.body;
+            const chatRoomWithUsersDTO : GetChatRoomWithUserResponseDTO = await this.chatService.getChatRoomWithUsers({ cr_id });
+            return res.status(200).json(chatRoomWithUsersDTO);
+        } catch (error) {
+            return next(error);
+        }
+    }
 
     generateChatRoom = async (req : Request, res : Response, next : NextFunction) => {
         try{

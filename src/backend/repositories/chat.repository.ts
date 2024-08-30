@@ -1,7 +1,7 @@
 import mysql from 'mysql2/promise';
 import { Inject, Service } from 'typedi';
 import Repository from './index.repository';
-import { ChatRoomDTO } from '../dto/response/chat';
+import { ChatRoomDTO, ChatRoomWithUsersDTO } from '../dto/response/chat';
 
 @Service()
 export default class ChatRepository extends Repository {
@@ -44,7 +44,43 @@ export default class ChatRepository extends Repository {
         `;
 
         const results = await this.executeQuery(query, [cr_id]);
+        console.log(results);
         return results.length ? (results[0] as ChatRoomDTO) : null;
+    }
+
+    async findOneWithUsersByRoomId({ cr_id } : { cr_id : number }) : Promise<ChatRoomWithUsersDTO | null> {
+        const chatRoomQuery = `
+            SELECT 
+                cr.cr_id,
+                cr.title
+            FROM 
+                ChatRoom cr
+            WHERE
+                cr.cr_id = ?
+            LIMIT 1
+        `;
+        const usersQuery = `
+            SELECT 
+                ucr.u_id
+            FROM 
+                USerChatRoom ucr
+            WHERE 
+                ucr.cr_id = ?
+        `;
+
+        const [chatRoomResults] = await this.executeQuery(chatRoomQuery, [cr_id]);
+        const userResults = await this.executeQuery(usersQuery, [cr_id]);
+
+        if (!chatRoomResults){
+            return null;
+        }
+
+
+        return {
+            cr_id : chatRoomResults.cr_id,
+            title : chatRoomResults.title,
+            users : userResults.map( (row : any) => row.u_id )
+        } as ChatRoomWithUsersDTO;
     }
     
     async create({ u_id, title } : { u_id : number, title : string }) : Promise<number> {

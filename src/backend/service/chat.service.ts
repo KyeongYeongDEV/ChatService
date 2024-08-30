@@ -1,5 +1,5 @@
 import { Inject, Service } from "typedi";
-import { DeleteChatRoomResponseDTO, GenerateChatRoomResponseDTO, GenerateChatRoomStatusDTO, GetCahtRoomResponseDTO, GetMessageResponseDTO } from "../dto/response/chat";
+import { ChatRoomWithUsersDTO, DeleteChatRoomResponseDTO, GenerateChatRoomResponseDTO, GenerateChatRoomStatusDTO, GetCahtRoomResponseDTO, GetChatRoomWithUserResponseDTO, GetMessageResponseDTO } from "../dto/response/chat";
 import ChatRepository from "../repositories/chat.repository";
 import MessageRepository from "../repositories/message.repository";
 
@@ -12,7 +12,7 @@ export default class ChatService {
 
     async getMessages({ cr_id, u_id } : { cr_id : number, u_id :number }) : Promise<GetMessageResponseDTO> {
         const foundChatRoom  = await this.chatRepository.findOneByRoomId({ cr_id });
-
+        console.log(foundChatRoom);
         if(!foundChatRoom) throw new Error('채팅방이 존재하지 않습니다');
         if(!(foundChatRoom.u_id !== u_id)) throw new Error('접근 권한이 없습니다.');
 
@@ -32,6 +32,17 @@ export default class ChatService {
             statusCode : 200,
             data : foundChatRooms,
         }
+    }
+
+    async getChatRoomWithUsers({ cr_id } : { cr_id : number}) : Promise <GetChatRoomWithUserResponseDTO> {
+        const chatRoom: ChatRoomWithUsersDTO | null = await this.chatRepository.findOneWithUsersByRoomId({ cr_id });
+        if (chatRoom === null) throw new Error('채팅방이 존재하지 않습니다');
+
+        return {
+            message: '성공적으로 조회하였습니다',
+            statusCode: 200,
+            data: chatRoom,
+        };
     }
 
     async generateChatRoom({ u_id, title } : { u_id : number, title : string }) : Promise<GenerateChatRoomResponseDTO> {
