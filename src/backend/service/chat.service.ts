@@ -1,5 +1,5 @@
 import { Inject, Service } from "typedi";
-import { ChatRoomWithUsersDTO, DeleteChatRoomResponseDTO, GenerateChatRoomResponseDTO, GenerateChatRoomStatusDTO, GetCahtRoomResponseDTO, GetChatRoomWithUserResponseDTO, GetMessageResponseDTO } from "../dto/response/chat";
+import { ChatRoomWithUsersDTO, DeleteChatRoomResponseDTO, GenerateChatRoomResponseDTO, GenerateChatRoomStatusDTO, GetCahtRoomResponseDTO, GetChatRoomWithUserResponseDTO, GetMessageResponseDTO, MessageDTO, SaveMessageResponseDTO } from "../dto/response/chat";
 import ChatRepository from "../repositories/chat.repository";
 import MessageRepository from "../repositories/message.repository";
 
@@ -10,18 +10,27 @@ export default class ChatService {
         @Inject( () => MessageRepository ) private readonly messageRepository : MessageRepository
     ){}
 
-    async getMessages({ cr_id, u_id } : { cr_id : number, u_id :number }) : Promise<GetMessageResponseDTO> {
-        const foundChatRoom  = await this.chatRepository.findOneByRoomId({ cr_id });
-        console.log(foundChatRoom);
-        if(!foundChatRoom) throw new Error('채팅방이 존재하지 않습니다');
-        if(!(foundChatRoom.u_id !== u_id)) throw new Error('접근 권한이 없습니다.');
+    async getMessagesByChatRoomId({ cr_id } : { cr_id : number }) : Promise<GetMessageResponseDTO> {
+        const messages : MessageDTO[] = await this.chatRepository.findMessagesByChatRoomId({ cr_id });
 
-        const foundMessage = await this.messageRepository.findAllByRoomId({cr_id});
+        if (!messages) {
+            throw new Error('메세지가 존재하지 않습니다');
+        }
+
         return {
-            message : '성공적으로 조회하였습니다',
+            message : '성공적으로 메세지를 조회했습니다',
             statusCode : 200,
-            data : foundMessage
-        };
+            data : messages
+        }
+    }
+
+    async saveMessage({ cr_id, u_id, sender_name, content } : { cr_id : number, u_id : number, sender_name : string, content : string }) : Promise<SaveMessageResponseDTO> {
+        const m_id : number = await this.chatRepository.saveMessage({ cr_id, u_id, sender_name, content });
+        return {
+            message : '성공적으로 메세지를 전송했습니다',
+            statusCode : 200,
+            data : {m_id}
+        }
     }
 
     async getChatRoom( { u_id } : {u_id : number}) : Promise<GetCahtRoomResponseDTO> {

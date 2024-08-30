@@ -15,4 +15,5 @@ export default ({ app } : { app : Router }) => {
     route.delete('/:cr_id', guardMiddleware, Container.get(ChatController).deleteChatRoom.bind(ChatController));
 
     route.get('/:cr_id/messages', guardMiddleware, Container.get(ChatController).getMessages.bind(ChatController));
+    route.post('/:cr_id/messages', guardMiddleware, Container.get(ChatController).sendMessage.bind(ChatController));
 }

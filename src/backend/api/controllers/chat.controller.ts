@@ -10,15 +10,25 @@ export default class ChatController {
 
     getMessages = async (req : Request, res : Response, next : NextFunction) => {
         try{
-            const { u_id } : { u_id : number } = req.body as Payload;
             const cr_id : number = parseInt(req.params.cr_id);
-            const messageResponseDTO : GetMessageResponseDTO = await this.chatService.getMessages({ cr_id, u_id });
+            const messageResponseDTO : GetMessageResponseDTO = await this.chatService.getMessagesByChatRoomId({ cr_id });
             console.log(messageResponseDTO);
             return res.status(200).json(messageResponseDTO);
         } catch (error) {
             return next(error);
         }
     };
+
+    sendMessage = async (req : Request, res : Response, next : NextFunction) => {
+        try{
+            const cr_id : number = parseInt(req.params.cr_id);
+            const { u_id, sender_name, content } = req.body;
+            const saveMessageResponseDTO = await this.chatService.saveMessage({ cr_id, u_id, sender_name, content });
+            return res.status(200).json(saveMessageResponseDTO);
+        }catch (error) {
+            return next(error);
+        }
+    }
     
     getChatRooms = async (req : Request, res : Response, next : NextFunction) => {
         try{
@@ -26,7 +36,7 @@ export default class ChatController {
             const chatRoomResponseDTO : GetCahtRoomResponseDTO = await this.chatService.getChatRoom({ u_id });
             return res.status(200).json(chatRoomResponseDTO);
         } catch (error) {
-            return next(error);
+            return next(error); 
         }
     };
 

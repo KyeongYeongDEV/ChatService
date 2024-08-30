@@ -1,7 +1,7 @@
 import mysql from 'mysql2/promise';
 import { Inject, Service } from 'typedi';
 import Repository from './index.repository';
-import { ChatRoomDTO, ChatRoomWithUsersDTO } from '../dto/response/chat';
+import { ChatRoomDTO, ChatRoomWithUsersDTO, MessageDTO } from '../dto/response/chat';
 
 @Service()
 export default class ChatRepository extends Repository {
@@ -26,6 +26,27 @@ export default class ChatRepository extends Repository {
         return (await this.executeQuery(query, [u_id])) as ChatRoomDTO[];
     }
 
+    async findMessagesByChatRoomId({ cr_id } : { cr_id : number }) : Promise<MessageDTO[]> {
+        const query = `
+            SELECT 
+                m_id, 
+                cr_id, 
+                u_id, 
+                sender_name, 
+                content, 
+                createAt 
+            FROM 
+                Message 
+            WHERE 
+                cr_id = ? 
+            ORDER BY 
+                createAt DESC
+        `;
+
+        const results = await this.executeQuery(query, [cr_id]);
+        return results as MessageDTO[];
+    }
+
     async findOneByRoomId({ cr_id } : { cr_id : number }) : Promise<ChatRoomDTO | null> {
         const query = `
             SELECT 
@@ -44,9 +65,9 @@ export default class ChatRepository extends Repository {
         `;
 
         const results = await this.executeQuery(query, [cr_id]);
-        console.log(results);
         return results.length ? (results[0] as ChatRoomDTO) : null;
     }
+
 
     async findOneWithUsersByRoomId({ cr_id } : { cr_id : number }) : Promise<ChatRoomWithUsersDTO | null> {
         const chatRoomQuery = `
@@ -71,15 +92,15 @@ export default class ChatRepository extends Repository {
         const [chatRoomResults] = await this.executeQuery(chatRoomQuery, [cr_id]);
         const userResults = await this.executeQuery(usersQuery, [cr_id]);
 
-        if (!chatRoomResults){
+        if (!chatRoomResults || chatRoomResults.length === 0){
             return null;
         }
 
 
         return {
-            cr_id : chatRoomResults.cr_id,
-            title : chatRoomResults.title,
-            users : userResults.map( (row : any) => row.u_id )
+            cr_id : chatRoomResults[0].cr_id,
+            title : chatRoomResults[0].title,
+            users : Array.isArray(userResults) ? userResults.map((row: any) => row.u_id) : []
         } as ChatRoomWithUsersDTO;
     }
     
@@ -197,5 +218,15 @@ export default class ChatRepository extends Repository {
             chatRoomStatus.grade,
             chatRoomStatus.feedback
         ]);
+    }
+
+    async saveMessage({ cr_id, u_id, sender_name, content} : { cr_id : number, u_id : number, sender_name : string, content : string }) : Promise<number> {
+        const query = `
+            INSERT INTO Message (cr_id, u_id, sender_name, content, createAt)
+            VALUES (?, ?, ?, ?, NOW())
+        `;
+        
+        const result = await this.executeQuery(query, [cr_id, u_id, sender_name, content]);
+        return (result as any).insertId;
     }
 }
