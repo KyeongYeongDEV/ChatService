@@ -11,3 +11,39 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* index.css */
+.chat-bubble {
+  display: inline-block;
+  padding: 10px 20px;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+.chat-bubble.me {
+  background-color: #ffe066;
+  align-self: flex-end;
+}
+
+.chat-bubble.other {
+  background-color: #f1f1f1;
+  align-self: flex-start;
+}
+
+.chat-window {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  height: 60vh;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}

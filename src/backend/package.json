@@ -20,6 +20,7 @@
     "nodemon": "^3.1.4",
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5",
     "typedi": "^0.10.0"
   },
   "scripts": {
