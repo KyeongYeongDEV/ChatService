@@ -8,7 +8,7 @@ export default ({ app } : { app : Router }) => {
     app.use("/chat", route);
 
     route.get('/', guardMiddleware, Container.get(ChatController).getChatRoomWithUsers.bind(ChatController));
-    route.post('/', guardMiddleware, Container.get(ChatController).generateOneToOneChatRoom.bind(ChatController));
+    route.post('/', guardMiddleware, Container.get(ChatController).generateChatRoom.bind(ChatController));
     route.post('/invite', guardMiddleware, Container.get(ChatController).addUserToChatRoom.bind(ChatController));
 
     route.post('/:cr_id/status', guardMiddleware, Container.get(ChatController).generateChatRoomStatus.bind(ChatController));

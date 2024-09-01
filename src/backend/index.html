@@ -1,41 +1,56 @@
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Socket.IO chat</title>
-        <style>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Socket.IO chat</title>
+    <style>
         ul { list-style-type: none; margin: 0; padding: 0; }
         li { padding: 8px; margin-bottom: 2px; background-color: #f1f1f1; }
         form { background: rgba(0, 0, 0, 0.15); padding: 5px; position: fixed; bottom: 0; width: 100%; }
         input { border: none; padding: 10px; width: 90%; margin-right: .5%; }
         button { width: 9%; background: #4CAF50; color: white; border: none; padding: 10px; }
-        </style>
-    </head>
-    <body>
-        <ul id="messages"></ul>
-        <form id="form" action="">
+    </style>
+</head>
+<body>
+    <ul id="messages"></ul>
+    <form id="form" action="">
         <input id="input" autocomplete="off" /><button>Send</button>
-        </form>
-        <script src="/socket.io/socket.io.js"></script>
-        <script>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
         var socket = io();
 
         var form = document.getElementById('form');
         var input = document.getElementById('input');
 
+        // 예제 사용자 정보 (실제로는 로그인 시 서버에서 제공받아야 함)
+        var userInfo = {
+            cr_id: 3, // 실제 채팅방 ID
+            u_id: 1, // 실제 사용자 ID
+            sender_name: "경영", // 실제 사용자 이름
+        };
+
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             if (input.value) {
-            socket.emit('chat message', input.value);
-            input.value = '';
+                // 서버로 메시지를 전송
+                socket.emit('chat message', {
+                    cr_id: userInfo.cr_id,
+                    u_id: userInfo.u_id,
+                    sender_name: userInfo.sender_name,
+                    content: input.value
+                });
+                input.value = '';
             }
         });
 
+        // 서버로부터 메시지를 수신하고 화면에 표시
         socket.on('chat message', function(msg) {
+            console.log('서버로부터 메시지 수신:', msg);  // 이 줄을 추가하여 메시지가 도착하는지 확인합니다.
             var item = document.createElement('li');
-            item.textContent = msg;
+            item.textContent = msg.sender_name + ": " + msg.content;
             document.getElementById('messages').appendChild(item);
             window.scrollTo(0, document.body.scrollHeight);
         });
-        </script>
-    </body>
-    </html>
+    </script>
+</body>
+</html>

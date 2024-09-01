@@ -24,6 +24,11 @@ export default class ChatController {
             const cr_id : number = parseInt(req.params.cr_id);
             const { u_id, sender_name, content } = req.body;
             const saveMessageResponseDTO = await this.chatService.saveMessage({ cr_id, u_id, sender_name, content });
+
+            req.app.get("io").to(cr_id).emit('chat message', { 
+                cr_id, u_id, sender_name, content 
+            });
+
             return res.status(200).json(saveMessageResponseDTO);
         }catch (error) {
             return next(error);

@@ -50,21 +50,16 @@ export default class ChatRepository extends Repository {
     async findOneByRoomId({ cr_id } : { cr_id : number }) : Promise<ChatRoomDTO | null> {
         const query = `
             SELECT 
-                m_id, 
-                cr_id, 
-                u_id, 
-                sender_name, 
-                content, 
-                createAt 
+                *
             FROM 
-                Message 
+                ChatRoom
             WHERE 
                 cr_id = ? 
-            ORDER BY 
-                createAt DESC
         `;
 
         const results = await this.executeQuery(query, [cr_id]);
+        console.log(results);
+
         return results.length ? (results[0] as ChatRoomDTO) : null;
     }
 
