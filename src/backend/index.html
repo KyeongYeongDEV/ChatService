@@ -24,9 +24,9 @@
 
         // 예제 사용자 정보 (실제로는 로그인 시 서버에서 제공받아야 함)
         var userInfo = {
-            cr_id: 3, // 실제 채팅방 ID
-            u_id: 1, // 실제 사용자 ID
-            sender_name: "경영", // 실제 사용자 이름
+            cr_id: prompt("Enter Chat Room ID"),  // 실제 채팅방 ID
+            u_id: prompt("Enter User ID"),  // 실제 사용자 ID
+            sender_name: prompt("Enter Your Name"),  // 실제 사용자 이름
         };
 
         form.addEventListener('submit', function(e) {

@@ -2,9 +2,10 @@ import { Server } from 'socket.io';
 import http from 'http';
 import ChatService from '../service/chat.service';
 import Container from 'typedi';
-import { response } from 'express';
+import { Application } from 'express';
+import ChatController from '../api/controllers/chat.controller';
 
-export default function initializeSocket(server : http.Server) {
+export default function initializeSocket({ app, server } : { app : Application, server : http.Server }) {
     const io = new Server(server, {
         cors : {
             origin : "*", //필요한 도메인으로 설정하거나, 모든 도멘에서 접속을 허용
@@ -12,7 +13,10 @@ export default function initializeSocket(server : http.Server) {
         }
     });
 
+    app.set("io", io);
+
     const chatService = Container.get(ChatService);
+    
     io.on('connection', (socket) => {
         console.log('사용자가 연결되었습니다', socket.id);
 
@@ -20,8 +24,10 @@ export default function initializeSocket(server : http.Server) {
             try {
                 const { cr_id, u_id, sender_name, content } = data;
                 console.log("메세지 수신 : ", content);
-                const saveMessageResponseDTO = await chatService.saveMessage({ cr_id, u_id, sender_name, content });
-                io.to(cr_id).emit('chat message', saveMessageResponseDTO );
+                const saveMessageResponseDTO = await chatService.saveMessage({ cr_id, u_id, sender_name, content, io });
+                
+                //io.to(cr_id).emit('chat message', saveMessageResponseDTO );
+                io.emit('chat message', data );
 
             } catch (error) {
                 console.log("메세지 저장 중 오류 발생 : ", error);

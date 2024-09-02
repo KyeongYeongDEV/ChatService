@@ -2,7 +2,6 @@ import { Application, json, urlencoded } from "express";
 import router from '../api/index.api';
 import errorMiddleware from "../api/middlewares/error.middleware";
 import cors from "cors";
-import { Server } from "socket.io";
 import initializeSocket from "./socket.loader";
 import path from "path";
 import http from "http";
@@ -21,7 +20,7 @@ export default async ({ app, server }: { app: Application, server: http.Server }
     });
 
     // Socket.IO 서버와 연결
-    const io = initializeSocket(server);
+    const io = initializeSocket({app, server});
 
     app.use(errorMiddleware);
 };
