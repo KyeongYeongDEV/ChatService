@@ -28,6 +28,7 @@ export default class ChatService {
         const m_id : number = await this.chatRepository.saveMessage({ cr_id, u_id, sender_name, content });
 
         io.to(cr_id).emit('chat message', { cr_id, u_id, sender_name, content });
+        
         return {
             message : '성공적으로 메세지를 전송했습니다',
             statusCode : 200,

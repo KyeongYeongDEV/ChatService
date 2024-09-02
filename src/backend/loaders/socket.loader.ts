@@ -26,8 +26,8 @@ export default function initializeSocket({ app, server } : { app : Application, 
                 console.log("메세지 수신 : ", content);
                 const saveMessageResponseDTO = await chatService.saveMessage({ cr_id, u_id, sender_name, content, io });
                 
-                //io.to(cr_id).emit('chat message', saveMessageResponseDTO );
-                io.emit('chat message', data );
+                // socket.broadcast.to(cr_id).emit('chat message', data);
+                // socket.emit('chat message', data);
 
             } catch (error) {
                 console.log("메세지 저장 중 오류 발생 : ", error);

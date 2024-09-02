@@ -27,8 +27,6 @@ export default class ChatController {
             const io = req.app.get('io');
             const saveMessageResponseDTO = await this.chatService.saveMessage({ cr_id, u_id, sender_name, content, io });
 
-         
-
             return res.status(200).json(saveMessageResponseDTO);
         }catch (error) {
             console.error('메시지 전송 중 오류 발생:', error);
