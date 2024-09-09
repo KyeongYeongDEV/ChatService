@@ -3,7 +3,8 @@ import http from 'http';
 import ChatService from '../service/chat.service';
 import Container from 'typedi';
 import { Application } from 'express';
-import ChatController from '../api/controllers/chat.controller';
+import JwtService from '../service/jwt.service';
+import { decode } from 'punycode';
 
 export default function initializeSocket({ app, server } : { app : Application, server : http.Server }) {
     const io = new Server(server, {
@@ -16,19 +17,22 @@ export default function initializeSocket({ app, server } : { app : Application, 
     app.set("io", io);
 
     const chatService = Container.get(ChatService);
+    const jwtService = Container.get(JwtService);
     
     io.on('connection', (socket) => {
         console.log('사용자가 연결되었습니다', socket.id);
 
         socket.on('chat message', async(data) => {
             try {
-                const { cr_id, u_id, sender_name, content } = data;
+                const { token, cr_id, content } = data;
                 console.log("메세지 수신 : ", content);
-                const saveMessageResponseDTO = await chatService.saveMessage({ cr_id, u_id, sender_name, content, io });
-                
-                // socket.broadcast.to(cr_id).emit('chat message', data);
-                // socket.emit('chat message', data);
 
+                const decodedToken = jwtService.decodedToken(token);
+                if(decodedToken !== null){
+                    console.log(decodedToken);
+                    const [u_id, sender_name] = decodedToken;
+                    const saveMessageResponseDTO = await chatService.saveMessage({ cr_id, u_id, sender_name, content, io });
+                }
             } catch (error) {
                 console.log("메세지 저장 중 오류 발생 : ", error);
             }

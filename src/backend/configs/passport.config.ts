@@ -4,7 +4,6 @@ import { Inject, Service } from 'typedi';
 import UserRepository from '../repositories/user.repository';
 import { AccessJwtConfig } from './jwt.config';
 
-
 @Service()
 export default class PassportConfig {
     constructor(
@@ -12,7 +11,7 @@ export default class PassportConfig {
         @Inject( () => UserRepository ) private readonly userRepository : UserRepository 
     ){}
 
-    private configurePassport() {
+    public initialize() {
         const opts : StrategyOptions = {
             jwtFromRequest : ExtractJwt.fromAuthHeaderAsBearerToken(),
             secretOrKey : this.accessJwtConfig.secret,
@@ -20,18 +19,17 @@ export default class PassportConfig {
 
         passport.use(
             new JwtStrategy(opts, async (jwt_payload, done) => {
-                try{
+                try {  
                     const user = await this.userRepository.findOndByPk(jwt_payload.u_id);
-
-                    if(user) {
+                    if (user) {
                         return done(null, user);
                     } else {
-                        return done(null, false);
+                        return  done(null, false);
                     }
-                } catch (error) {
+                } catch (error) {   
                     return done(error, false);
                 }
             })
-        );
+        )
     }
 }

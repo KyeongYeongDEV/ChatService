@@ -17,7 +17,7 @@ export class RefreshJwtConfig {
     public readonly expireIn : string;
 
     constructor() {
-        this.secret = process.env.JWT_SECRET || 'defualt_secret';
+        this.secret = process.env.JWT_SECRET || 'default_secret';
         this.expireIn = process.env.JWT_EXPIRE_IN || '1h';
     }
 }

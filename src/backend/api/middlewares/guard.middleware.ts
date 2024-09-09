@@ -4,15 +4,14 @@ import JwtService from "../../service/jwt.service";
 import { Payload } from "../../types/express";
 
 export default (req : Request, res : Response, next : NextFunction) => {
-    const BearerToken = req.headers.authorization;
-    if(!BearerToken || !BearerToken.startsWith('Bearer ')){
-        return res.status(401).json({ message : '인증되지 않은 요청입니다' });
-    }
-
-    const accessToken = BearerToken.split(' ')[1];
-    const jwtService = Container.get(JwtService);
-
     try {
+        const BearerToken = req.headers.authorization;
+        if(!BearerToken || !BearerToken.startsWith('Bearer ')){
+            return res.status(401).json({ message : '인증되지 않은 요청입니다'});
+        }
+
+        const accessToken = BearerToken.split(' ')[1];
+        const jwtService = Container.get(JwtService);
         const Payload = jwtService.verifyAccessToken(accessToken);
         req.user = Payload as Payload
 

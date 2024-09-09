@@ -5,6 +5,9 @@ import cors from "cors";
 import initializeSocket from "./socket.loader";
 import path from "path";
 import http from "http";
+import PassportConfig from "../configs/passport.config";
+import Container from "typedi";
+import passport from "passport";
 
 export default async ({ app, server }: { app: Application, server: http.Server }) => {
     app.use(cors((req, callback) => {
@@ -21,6 +24,10 @@ export default async ({ app, server }: { app: Application, server: http.Server }
 
     // Socket.IO 서버와 연결
     const io = initializeSocket({app, server});
+
+    const passportConfig = Container.get(PassportConfig);
+    passportConfig.initialize();
+    app.use(passport.initialize());
 
     app.use(errorMiddleware);
 };

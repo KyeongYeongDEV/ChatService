@@ -11,7 +11,7 @@ export default class AuthService {
         @Inject( () => UserRepository ) private readonly userRepository : UserRepository,
         @Inject( () => JwtService ) private readonly jwtService : JwtService,
         @Inject( () => CryptoService ) private readonly cryptoService :CryptoService,
-        ) {}
+    ) {}
 
     login = async ({ u_email, u_password } : UserLoginRequestDTO) : Promise<UserLoginResponseDTO> => {
         const user = await this.userRepository.findOndByPk({ u_email });
@@ -19,8 +19,6 @@ export default class AuthService {
         if (!user) {
             throw new Error('존재하지 않는 아이디입니다');
         }
-
-        console.log(user.password);
     
         if (!(await this.cryptoService.comparePassword(u_password, user.password))) {
             throw new Error('비밀번호가 일치하지 않습니다.')
@@ -63,5 +61,4 @@ export default class AuthService {
     private generateToken = async (payload : object) : Promise<[string, string]> => {
         return [this.jwtService.generateAccessToken(payload), this.jwtService.generateRefreshToken(payload)];
     }
-
 }
