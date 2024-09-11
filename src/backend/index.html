@@ -88,10 +88,14 @@
         var userInfo = {
             token : prompt("JWT 토큰을 입력하세요"),
             cr_id: prompt("Enter Chat Room ID"),
+            u_id : null,
         };
 
-        // 방에 참가
         socket.emit('join_room', userInfo.cr_id);
+
+        socket.on('authenticated', function(authenticatedUser) {
+            userInfo.u_id = authenticatedUser.u_id;
+        })
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -106,13 +110,12 @@
             }
         });
 
-        // 서버로부터 메시지를 수신하고 화면에 표시
         socket.on('chat message', function(msg) {
             var item = document.createElement('li');
             item.textContent = msg.sender_name + ": " + msg.content;
 
             // 메시지 발신자에 따라 스타일을 적용
-            if (msg.u_id == userInfo.u_id) {
+            if (msg.u_id !== userInfo.u_id) {
                 item.className = 'me';
             } else {
                 item.className = 'other';

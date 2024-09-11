@@ -4,7 +4,6 @@ import ChatService from '../service/chat.service';
 import Container from 'typedi';
 import { Application } from 'express';
 import JwtService from '../service/jwt.service';
-import { decode } from 'punycode';
 
 export default function initializeSocket({ app, server } : { app : Application, server : http.Server }) {
     const io = new Server(server, {
@@ -29,8 +28,9 @@ export default function initializeSocket({ app, server } : { app : Application, 
 
                 const decodedToken = jwtService.decodedToken(token);
                 if(decodedToken !== null){
-                    console.log(decodedToken);
                     const [u_id, sender_name] = decodedToken;
+                    socket.to(cr_id).emit('authenticated', {u_id})
+
                     const saveMessageResponseDTO = await chatService.saveMessage({ cr_id, u_id, sender_name, content, io });
                 }
             } catch (error) {
