@@ -114,8 +114,8 @@
             var item = document.createElement('li');
             item.textContent = msg.sender_name + ": " + msg.content;
 
-            // 메시지 발신자에 따라 스타일을 적용
-            if (msg.u_id !== userInfo.u_id) {
+            //TODO: msg.u_id와 userInfo.u_id가 같을 때로 수정해야 함
+            if (msg.u_id == userInfo.u_id) {
                 item.className = 'me';
             } else {
                 item.className = 'other';

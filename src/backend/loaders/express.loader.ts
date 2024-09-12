@@ -1,15 +1,18 @@
 import { Application, json, urlencoded } from "express";
+
 import router from '../api/index.api';
 import errorMiddleware from "../api/middlewares/error.middleware";
+import PassportConfig from "../configs/passport.config";
+
 import cors from "cors";
-import initializeSocket from "./socket.loader";
 import path from "path";
 import http from "http";
-import PassportConfig from "../configs/passport.config";
 import Container from "typedi";
 import passport from "passport";
+import ChatService from "../service/chat.service";
+import ChatSocket from "../sockets/chat.socket";
 
-export default async ({ app, server }: { app: Application, server: http.Server }) => {
+export default async ({ app }: { app: Application }) => {
     app.use(cors((req, callback) => {
         console.log(`CORS enabled for: ${req.method} ${req.url}`);
         callback(null, { origin: true });
@@ -22,11 +25,9 @@ export default async ({ app, server }: { app: Application, server: http.Server }
         res.sendFile(path.join(__dirname, '../index.html'));
     });
 
-    // Socket.IO 서버와 연결
-    const io = initializeSocket({app, server});
-
     const passportConfig = Container.get(PassportConfig);
     passportConfig.initialize();
+    
     app.use(passport.initialize());
 
     app.use(errorMiddleware);
