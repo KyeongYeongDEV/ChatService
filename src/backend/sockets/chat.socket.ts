@@ -1,12 +1,8 @@
-import { Application } from "express";
-import { Server, ServerOptions, Socket } from "socket.io";
-import http from 'http';
-import Container, { Inject, Service } from "typedi";
+import { Server, Socket } from "socket.io";
+import { Inject, Service } from "typedi";
 import ChatService from "../service/chat.service";
 import JwtService from "../service/jwt.service";
 
-const chatService = Container.get(ChatService);
-const jwtService = Container.get(JwtService);
 
 @Service()
 export default class ChatSocket {
@@ -14,12 +10,8 @@ export default class ChatSocket {
         @Inject( () => ChatService ) private readonly chatService : ChatService,
         @Inject( () => JwtService ) private readonly jwtService : JwtService,
     ) {}
-
-    async initializeSocket({ app, server } : { app : Application, server : http.Server }) {
-        const io = Container.get<Server>("io");
-
-        app.set("io", io);
-
+        //{ app, server } : { app : Application, server : http.Server }
+    async initializeSocket(io : Server) {
         io.on("connection", (socket: Socket) => {
             console.log(`User connected: ${socket.id}`);
     
@@ -31,10 +23,10 @@ export default class ChatSocket {
             socket.on("chat message", async (data) => {
                 try {
                     const { token, cr_id, content } = data;
-                    const decodedToken = jwtService.decodedToken(token);
+                    const decodedToken = this.jwtService.decodedToken(token);
                     if (decodedToken !== null) {
                         const [ u_id, sender_name ] = decodedToken;
-                        await chatService.saveMessage({ cr_id, u_id, sender_name, content, io });
+                        await this.chatService.saveMessage({ cr_id, u_id, sender_name, content, io });
                         io.to(cr_id).emit("chat message", { u_id, sender_name, content });
                     }
                 } catch (err) {

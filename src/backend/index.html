@@ -94,7 +94,8 @@
         socket.emit('join_room', userInfo.cr_id);
 
         socket.on('authenticated', function(authenticatedUser) {
-            userInfo.u_id = authenticatedUser.u_id;
+            console.log(authenticatedUser);
+            userInfo.u_id = authenticatedUser;
         })
 
         form.addEventListener('submit', function(e) {
@@ -104,6 +105,7 @@
                 socket.emit('chat message', {
                     token : userInfo.token,
                     cr_id: userInfo.cr_id,
+                    u_id : userInfo.u_id,
                     content: input.value
                 });
                 input.value = '';
@@ -111,16 +113,23 @@
         });
 
         socket.on('chat message', function(msg) {
+            if (userInfo.u_id === null) {
+        console.log("사용자 ID가 아직 설정되지 않았습니다.");
+        return;
+    }
+
             var item = document.createElement('li');
             item.textContent = msg.sender_name + ": " + msg.content;
 
             //TODO: msg.u_id와 userInfo.u_id가 같을 때로 수정해야 함
-            if (msg.u_id == userInfo.u_id) {
+            console.log(msg.u_id + "   " + userInfo.u_id);
+            if (msg.u_id === userInfo.u_id) {
                 item.className = 'me';
             } else {
                 item.className = 'other';
             }
-
+            // 비교 로직에서 타입 강제 일치 확인
+    console.log("서버에서 받은 u_id:", msg.u_id, "현재 클라이언트 u_id:", userInfo.u_id);
             document.getElementById('messages').appendChild(item);
             document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
         });

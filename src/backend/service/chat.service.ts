@@ -26,9 +26,7 @@ export default class ChatService {
 
     async saveMessage({ cr_id, u_id, sender_name, content, io } : { cr_id : number, u_id : number, sender_name : string, content : string, io : any }) : Promise<SaveMessageResponseDTO> {
         const m_id : number = await this.chatRepository.saveMessage({ cr_id, u_id, sender_name, content });
-
-        io.to(cr_id).emit('chat message', { cr_id, u_id, sender_name, content });
-        
+        io.to(cr_id).emit("authenticated", u_id);
         return {
             message : '성공적으로 메세지를 전송했습니다',
             statusCode : 200,
