@@ -41,6 +41,7 @@ export default class ChatRepository extends Repository {
                 cr_id = ? 
             ORDER BY 
                 createAt DESC
+            LIMIT 20
         `;
 
         const results = await this.executeQuery(query, [cr_id]);
