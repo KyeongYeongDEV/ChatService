@@ -26,7 +26,7 @@ export default async ({ app }: { app: Application }) => {
     }));
     app.use(json());
     app.use(urlencoded({ extended: false }));
-    app.use('/api', router());
+    app.use('/api1', router());
     app.use(session({
         store : new RedisStore({ client : redisClient}),
         resave : false,
@@ -47,68 +47,18 @@ export default async ({ app }: { app: Application }) => {
     app.use(passport.initialize());
     app.use(passport.session());
 
-    const apiEndPoint = 'http://api.data.go.kr/openapi/tn_pubr_public_nutri_food_info_api?';
+    const apiEndPoint = 'http://api.data.go.kr/openapi/tn_pubr_public_nutri_food_info_api';
+    //http://api.data.go.kr/openapi/tn_pubr_public_nutri_food_info_api?serviceKey=js9FxyEZJoFII3CogTHwWpkDnk1LKSiAoee2Nc%2B9%2Foau9IgC1MQnQoIg%2F%2FbxW368301q3frVDeYJyiqYqBXT5A%3D%3D&pageNo=1&numOfRows=100&type=json&foodNm=쌀밥
 
 
     async function fetchFoodData() {
         try {
             var queryParams = '?' + encodeURIComponent('serviceKey') + '=' + process.env.API_DECODING_KEY; /* Service Key*/
-            queryParams += '&' + encodeURIComponent('pageNo') + '=' + encodeURIComponent('1'); /* */
-            queryParams += '&' + encodeURIComponent('numOfRows') + '=' + encodeURIComponent('100'); /* */
-            queryParams += '&' + encodeURIComponent('type') + '=' + encodeURIComponent('json'); /* */
-            queryParams += '&' + encodeURIComponent('foodNm') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('foodNm') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('dataCd') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('typeNm') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('foodOriginCd') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('foodOriginNm') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('foodLv3Cd') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('foodLv3Nm') + '=' + encodeURIComponent(''); /* */ 
-            queryParams += '&' + encodeURIComponent('foodLv4Cd') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('foodLv4Nm') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('foodLv5Cd') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('foodLv5Nm') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('foodLv6Cd') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('foodLv6Nm') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('foodLv7Cd') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('foodLv7Nm') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('nutConSrtrQua') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('enerc') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('water') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('prot') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('fatce') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('ash') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('chocdf') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('sugar') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('fibtg') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('ca') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('fe') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('p') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('k') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('nat') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('vitaRae') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('retol') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('cartb') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('thia') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('ribf') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('nia') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('vitc') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('vitd') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('chole') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('fasat') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('fatrn') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('srcCd') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('srcNm') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('foodSize') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('restNm') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('dataProdCd') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('dataProdNm') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('crtYmd') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('crtrYmd') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('instt_code') + '=' + encodeURIComponent(''); /* */
-            queryParams += '&' + encodeURIComponent('instt_nm') + '=' + encodeURIComponent(''); /* */
+
+
 
             const url = apiEndPoint + queryParams;
+            console.log(url);
 
             const response = await axios.get(url);
             console.log(response);
